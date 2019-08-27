@@ -1,0 +1,7 @@
+E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\bin\Debug\TP_Final_DD.exe.config
+E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\bin\Debug\TP_Final_DD.exe
+E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\bin\Debug\TP_Final_DD.pdb
+E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.csprojAssemblyReference.cache
+E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.csproj.CoreCompileInputs.cache
+E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.exe
+E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.pdb
