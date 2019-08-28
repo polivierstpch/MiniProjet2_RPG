@@ -10,10 +10,10 @@ namespace TP_Final_DD
     class PlayMap
     {
         private int position = 1;
-        private List<Tuile> map = new List<Tuile>();
-        private List<Monstre> monstres = new List<Monstre>();
-        private List<Equipement> items = new List<Equipement>();
-        public Random chance = new Random();
+        private List<Tile> map = new List<Tile>();
+        private List<Monster> monsters = new List<Monster>();
+        private List<Equipment> items = new List<Equipment>();
+        private static Random chance = new Random();
 
         public void DataReader()
         {
@@ -25,14 +25,14 @@ namespace TP_Final_DD
                     while (!cartesList.EndOfStream)
                     {
                         line = cartesList.ReadLine();
-                        Tuile nTuile = new Tuile(int.Parse(line.Split(',').ToList()[0]), line.Split(',').ToList()[1], int.Parse(line.Split(',').ToList()[2]));
+                        Tile nTuile = new Tile(int.Parse(line.Split(',').ToList()[0]), line.Split(',').ToList()[1], int.Parse(line.Split(',').ToList()[2]));
                         this.map.Add(nTuile);
                     }
                 }
             }
             else
             {
-                Console.WriteLine("File not Existe! 01");
+                Console.WriteLine("le fichier carte.csv n'a pas été trouvé!");
                 Console.ReadKey();
                 Environment.Exit(-1);
             }
@@ -45,14 +45,14 @@ namespace TP_Final_DD
                     while (!equipementList.EndOfStream)
                     {
                         line = equipementList.ReadLine();
-                        Equipement nEquip = new Equipement(int.Parse(line.Split(',').ToList()[0]), line.Split(',').ToList()[1], line.Split(',').ToList()[2], line.Split(',').ToList()[3], int.Parse(line.Split(',').ToList()[4]));
+                        Equipment nEquip = new Equipment(int.Parse(line.Split(',').ToList()[0]), line.Split(',').ToList()[1], line.Split(',').ToList()[2], line.Split(',').ToList()[3], int.Parse(line.Split(',').ToList()[4]));
                         this.items.Add(nEquip);
                     }
                 }
             }
             else
             {
-                Console.WriteLine("File not Existe! 02");
+                Console.WriteLine("Le fichier equipement.csv n'a pas été trouvé!");
                 Console.ReadKey();
                 Environment.Exit(-1);
             }
@@ -65,49 +65,49 @@ namespace TP_Final_DD
                     while (!monsterList.EndOfStream)
                     {
                         line = monsterList.ReadLine();
-                        Monstre nMonster = new Monstre(int.Parse(line.Split(',').ToList()[0]), line.Split(',').ToList()[1], int.Parse(line.Split(',').ToList()[2]), int.Parse(line.Split(',').ToList()[3]), int.Parse(line.Split(',').ToList()[4]));
-                        this.monstres.Add(nMonster);
+                        Monster nMonster = new Monster(int.Parse(line.Split(',').ToList()[0]), line.Split(',').ToList()[1], int.Parse(line.Split(',').ToList()[2]), int.Parse(line.Split(',').ToList()[3]), int.Parse(line.Split(',').ToList()[4]));
+                        this.monsters.Add(nMonster);
                     }
                 }
             }
             else
             {
-                Console.WriteLine("File not Existe! 03");
+                Console.WriteLine("Le fichier 'monstre.csv' n'a pas été trouvé!");
                 Console.ReadKey();
                 Environment.Exit(-1);
             }
         }
-        private void Mouvement()
+        private void Movement()
         {
-            int mouvement = this.chance.Next(1,4);
-            if (this.position + mouvement > 32)
+            int movemement = chance.Next(1,4);
+            if (this.position + movemement > 32)
             {
-                this.position += mouvement - 32;
+                this.position += movemement - 32;
             }
             else
             {
-                this.position += mouvement;
+                this.position += movemement;
             }
         }
 
-        public void PlayEvent(Personnage joueur)
+        public void PlayEvent(Character player)
         {
-            foreach (Tuile tuile in map)
+            foreach (Tile tile in map)
             {
-                if (this.position == tuile.Id)
+                if (this.position == tile.ID)
                 {
-                    switch (tuile.EventType)
+                    switch (tile.EventType)
                     {
                         case "vide":
-                            Mouvement();
+                            Movement();
                             break;
                         case "monstre":
-                            Combat(joueur, MonsterGenerateur(tuile.EventId));
-                            Mouvement();
+                            Combat(player, MonsterGenerator(tile.EventId));
+                            Movement();
                             break;
                         case "coffre":
-                            Equipement_Random(joueur);
-                            Mouvement();
+                            RandomEquipment(player);
+                            Movement();
                             break;
                         case "sortie":
                             Console.Clear();
@@ -120,28 +120,28 @@ namespace TP_Final_DD
             }
         }
 
-        private void Combat(Personnage joueur, Monstre enconter)
+        private void Combat(Character player, Monster encounter)
         {
             int initiative = chance.Next(2);
-            while (joueur.PVAct > 0 && enconter.PVAct > 0)
+            while (player.CurrentHP > 0 && encounter.CurrentHP > 0)
             {
                 if (initiative == 0)
                 {
                     //Joueur agit
-                    ChoixJouer(joueur, enconter);
+                    PlayerChoice(player, encounter);
                     //Monstre agit
-                    AttackOrPass(joueur, enconter);
+                    AttackOrPass(player, encounter);
                 }
                 else
                 {
                     //Monstre agit
-                    AttackOrPass(joueur, enconter);
+                    AttackOrPass(player, encounter);
                     //Joueur agit
-                    ChoixJouer(joueur, enconter);
+                    PlayerChoice(player, encounter);
                 }
             }
             //Le Joueur Meur!!!
-            if (joueur.PVAct < 1)
+            if (player.CurrentHP < 1)
             {
                 Console.Clear();
                 Console.WriteLine("Vous et mort Game Over");
@@ -150,84 +150,86 @@ namespace TP_Final_DD
             }
         }
 
-        private void ChoixJouer(Personnage joueur, Monstre enconter)
+        private void PlayerChoice(Character player, Monster encounter)
         {
             while (Console.KeyAvailable) Console.ReadKey(true); 
             switch (Console.ReadKey().KeyChar)
             {
                 case 'a':
-                    joueur.IsDefending = false;
-                    enconter.TakeDamage(joueur.Attac);
+                    player.IsDefending = false;
+                    encounter.TakeDamage(player.Attack);
                     break;
                 case 's':
-                    joueur.IsDefending = false;
-                    enconter.TakeDamage(joueur.SpecialAttack());
+                    player.IsDefending = false;
+                    encounter.TakeDamage(player.SpecialAttack());
                     break;
                 case 'd':
-                    joueur.IsDefending = true;
+                    player.IsDefending = true;
                     break;
                 case 'p':
-                    joueur.IsDefending = false;
+                    player.IsDefending = false;
                     Console.WriteLine("H pour étendre la potion sur vos blaissure");
                     Console.WriteLine("M pour la boir et regagnier du MANA!");
                     while (Console.KeyAvailable) Console.ReadKey(true);
                     switch (Console.ReadKey(true).KeyChar)
                     {
                         case 'H':
-                            joueur.UsePotions("Vie");
+                            player.UsePotions("Vie");
                             break;
                         case 'M':
-                            joueur.UsePotions("Mana");
+                            player.UsePotions("Mana");
                             break;
                     }
                     break;
             }
         }
 
-        private Monstre MonsterGenerateur(int EventId)
+        private Monster MonsterGenerator(int eventId)
         {
-            foreach (Monstre enconter in monstres)
+            foreach (Monster encounter in monsters)
             {
-                if (EventId == enconter.ID)
+                if (eventId == encounter.ID)
                 {
-                    return enconter;
+                    return encounter;
                 }
             }
+
+            // If no monsters are found, return a null Monster
             return null;
         }
 
-        private void Equipement_Random(Personnage joueur)
+        private void RandomEquipment(Character player)
         {
-            int EquipemenGenerateur = chance.Next(1,6);
-            foreach (Equipement item in items)
+            int EquipmentGenerator = chance.Next(1,6);
+            foreach (Equipment item in items)
             {
-                if (EquipemenGenerateur == item.Id)
+                if (EquipmentGenerator == item.ID)
                 {
-                    switch (item.Type)
+                    switch (item.ItemType)
                     {
                         case "potion":
-                            joueur.NombrePotions++;
+                            player.NumOfPotions++;
                             break;
                         case "arme":
-                            if (item.Mod > joueur.Attac && item.Classe == joueur.ClassePerso)
+                            if (item.Modifier > player.Attack && item.ClassRequired == player.CharacterClass)
                             {
-                                joueur.Attac = item.Mod;
-                                joueur.Weapon = item.Nom;
+                                player.Attack = item.Modifier;
+                                player.Weapon = item.Name;
                             }
                             else
                             {
-                                Console.WriteLine($"{item.Nom} est sans valeure");
+                                Console.WriteLine($"{item.Name} est sans valeure");
                             }
                             return;
                         case "armure":
-                            if (item.Mod > joueur.Def && item.Classe == joueur.ClassePerso)
+                            if (item.Modifier > player.Defense && item.ClassRequired == player.CharacterClass)
                             {
-                                joueur.Def = item.Mod;
-                                joueur.Armor = item.Nom;
+                                player.Defense = item.Modifier;
+                                player.Armor = item.Name;
                             }
                             else
                             {
-                                Console.WriteLine($"{item.Nom} est sans valeure");
+                                Console.WriteLine($"{item.Name} est sans valeure");
                             }
                             return;
                     }
@@ -235,17 +237,19 @@ namespace TP_Final_DD
             }
         }
 
-        private void AttackOrPass(Personnage joueur, Monstre enconter)
+        private void AttackOrPass(Character player, Monster encounter)
         {
-            int deforatt = chance.Next(2);
-            if (deforatt == 0)
+            int defenseOrAttack = chance.Next(2);
+            if (defenseOrAttack == 0)
             {
-                enconter.IsDefending = true;
+                encounter.IsDefending = true;
+                
             }
             else
             {
-                enconter.IsDefending = false;
-                joueur.TakeDamage(enconter.Attac);
+                encounter.IsDefending = false;
+                player.TakeDamage(encounter.Attack);
+                
             }
         }
     }
