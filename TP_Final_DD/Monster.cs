@@ -14,6 +14,7 @@ namespace TP_Final_DD
 
         //AXcceseur
         public int ID { get { return id; } }
+        public string Name { get { return name; } }
         public int MaxHP { get { return maxHp; } }
         public int CurrentHP { get { return currentHp; } }
         public int Attack { get { return attack; } }
@@ -33,12 +34,13 @@ namespace TP_Final_DD
         {
             if (isDefending == true)
             {
-                this.currentHp -= Math.Max(0, damage - this.defense);
+                damage = Math.Max(0, damage - this.defense);
+         
             }
-            else
-            {
-                this.currentHp -= damage;
-            }
+
+            this.currentHp -= damage;
+
+            GameManager.AddToGameLog($"Le {this.name} prends {damage} points de dégâts.");
         }
     }
 }

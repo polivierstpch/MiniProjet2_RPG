@@ -60,17 +60,18 @@ namespace TP_Final_DD
         {
             if (isDefending == true)
             {
-                this.currentHp -= Math.Max(0, damage - this.defense); 
+                damage = Math.Max(0, damage - this.defense);
             }
-            else
-            {
-                this.currentHp = this.currentHp - damage;
-            }
+
+            this.currentHp -= damage;
+
+            GameManager.AddToGameLog($"Vous prenez {damage} points de dégâts.");
         }
         public void UsePotions(string lifeOrMana)
         {
             if (this.numOfPotions > 0)
             {
+                numOfPotions--;
                 switch (lifeOrMana)
                 {
                     case "Vie":
@@ -110,7 +111,7 @@ namespace TP_Final_DD
                     }
                     else
                     {
-                        //Console.WriteLine("You do not have enough mana!");
+                        GameManager.AddToGameLog("Vous n'avez pas assez de mana pour lancer votre attaque spéciale!");
                         return 0;
                     }
                 case "mage":
@@ -122,7 +123,7 @@ namespace TP_Final_DD
                     }
                     else
                     {
-                        //Console.WriteLine("You do not have enough mana!");
+                        GameManager.AddToGameLog("Vous n'avez pas assez de mana pour lancer votre attaque spéciale!");
                         return 0;
                     }
                 default:

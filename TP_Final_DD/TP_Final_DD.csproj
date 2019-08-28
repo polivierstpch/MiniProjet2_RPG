@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Equipment.cs" />
-    <Compile Include="GameLog.cs" />
+    <Compile Include="GameManager.cs" />
     <Compile Include="Monster.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="PlayMap.cs" />

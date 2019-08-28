@@ -15,7 +15,13 @@ namespace TP_Final_DD
         private List<Equipment> items = new List<Equipment>();
         private static Random chance = new Random();
 
-        public void DataReader()
+        public PlayMap()
+        {
+            DataReader();
+        }
+
+        // Get data from csv files
+        private void DataReader()
         {
             if (File.Exists("carte.csv"))
             {
@@ -74,7 +80,7 @@ namespace TP_Final_DD
             {
                 Console.WriteLine("Le fichier 'monstre.csv' n'a pas été trouvé!");
                 Console.ReadKey();
-                Environment.Exit(-1);
+                Environment.Exit(0);
             }
         }
         private void Movement()
@@ -125,6 +131,7 @@ namespace TP_Final_DD
             int initiative = chance.Next(2);
             while (player.CurrentHP > 0 && encounter.CurrentHP > 0)
             {
+                             
                 if (initiative == 0)
                 {
                     //Joueur agit
@@ -139,12 +146,15 @@ namespace TP_Final_DD
                     //Joueur agit
                     PlayerChoice(player, encounter);
                 }
+
+                GameManager.UpdateCombatUI(player,encounter);
+                GameManager.ClearCombatLog();
             }
             //Le Joueur Meur!!!
             if (player.CurrentHP < 1)
             {
                 Console.Clear();
-                Console.WriteLine("Vous et mort Game Over");
+                //GameLogger.GameOverScreen();
                 Console.ReadKey();
                 Environment.Exit(0);
             }
@@ -152,36 +162,57 @@ namespace TP_Final_DD
 
         private void PlayerChoice(Character player, Monster encounter)
         {
-            while (Console.KeyAvailable) Console.ReadKey(true); 
-            switch (Console.ReadKey().KeyChar)
+            bool wrongInput = false;
+            do
             {
-                case 'a':
-                    player.IsDefending = false;
-                    encounter.TakeDamage(player.Attack);
-                    break;
-                case 's':
-                    player.IsDefending = false;
-                    encounter.TakeDamage(player.SpecialAttack());
-                    break;
-                case 'd':
-                    player.IsDefending = true;
-                    break;
-                case 'p':
-                    player.IsDefending = false;
-                    Console.WriteLine("H pour étendre la potion sur vos blaissure");
-                    Console.WriteLine("M pour la boir et regagnier du MANA!");
-                    while (Console.KeyAvailable) Console.ReadKey(true);
-                    switch (Console.ReadKey(true).KeyChar)
-                    {
-                        case 'H':
-                            player.UsePotions("Vie");
-                            break;
-                        case 'M':
-                            player.UsePotions("Mana");
-                            break;
-                    }
-                    break;
-            }
+                switch (Console.ReadKey().KeyChar)
+                {
+                    case 'a':
+                        GameManager.AddToGameLog($"Vous attaquez le {encounter.Name} avec votre {player.Weapon}");
+                        player.IsDefending = false;
+                        encounter.TakeDamage(player.Attack);
+                        wrongInput = false;
+                        break;
+                    case 's':
+                        GameManager.AddToGameLog($"Vous utiliser votre attaque spéciale!");
+                        player.IsDefending = false;
+                        encounter.TakeDamage(player.SpecialAttack());
+                        wrongInput = false;
+                        break;
+                    case 'd':
+                        player.IsDefending = true;
+                        GameManager.AddToGameLog("Vous prenez une posture défensive.");
+                        wrongInput = false;
+                        break;
+                    case 'p':
+                        player.IsDefending = false;
+                        GameManager.AddToGameLog("Vous prenez une potion.");
+                        GameManager.AddToGameLog("Appuyez sur H pour récupérer 50 points de vie ou appuyez sur M pour récupérer 50 points de mana!");
+                        GameManager.UpdateCombatUI(player, encounter);
+                        wrongInput = false;
+                        switch (Console.ReadKey(true).KeyChar)
+                        {
+                            case 'H':
+                                player.UsePotions("Vie");
+                                GameManager.AddToGameLog("Vous récupérer 50 points de vie.");
+                                break;
+                            case 'M':
+                                player.UsePotions("Mana");
+                                GameManager.AddToGameLog("Vous récupérer 50 points de mana.");
+                                break;
+                            default:
+                                wrongInput = true;
+                                break;
+                        }
+                        
+                        break;
+                    default:
+                        wrongInput = true;
+                        break;
+         
+                }              
+            } while (wrongInput);
+
         }
 
         private Monster MonsterGenerator(int eventId)
@@ -242,15 +273,17 @@ namespace TP_Final_DD
             int defenseOrAttack = chance.Next(2);
             if (defenseOrAttack == 0)
             {
-                encounter.IsDefending = true;
-                
+                GameManager.AddToGameLog($"Le {encounter.Name} prend une posture défensive.");
+                encounter.IsDefending = true;                         
             }
             else
             {
+                GameManager.AddToGameLog($"Le {encounter.Name} vous attaque!");
                 encounter.IsDefending = false;
                 player.TakeDamage(encounter.Attack);
                 
             }
+
         }
     }
 }

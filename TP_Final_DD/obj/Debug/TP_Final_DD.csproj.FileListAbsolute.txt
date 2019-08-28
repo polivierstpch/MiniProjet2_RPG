@@ -5,3 +5,10 @@ E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\obj\Debu
 E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.csproj.CoreCompileInputs.cache
 E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.exe
 E:\Programmation orientée objet 1\TP_Final\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.pdb
+C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\bin\Debug\TP_Final_DD.exe.config
+C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\bin\Debug\TP_Final_DD.exe
+C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\bin\Debug\TP_Final_DD.pdb
+C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.csprojAssemblyReference.cache
+C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.csproj.CoreCompileInputs.cache
+C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.exe
+C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.pdb
