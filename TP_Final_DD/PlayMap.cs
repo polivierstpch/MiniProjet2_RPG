@@ -85,49 +85,89 @@ namespace TP_Final_DD
         }
         private void Movement()
         {
-            int movemement = chance.Next(1,4);
-            if (this.position + movemement > 32)
+            int movement = chance.Next(1,4);
+            if (this.position + movement > 32)
             {
-                this.position += movemement - 32;
+                this.position += movement - 32;
             }
             else
             {
-                this.position += movemement;
+                this.position += movement;
             }
+           
+
+            GameManager.AddToGameLog($"Vous vous déplacez de {movement} pièces.");
+            GameManager.SetGamePrompt("Appuyez sur une touche pour continuer");
+            GameManager.UpdateLog();
+            Console.ReadKey();
         }
 
-        public void PlayEvent(Character player)
+        public void PlayGame(Character player)
+        {
+            Tile currentTile;
+
+            GameManager.DrawUI(player);
+
+            do
+            {
+
+                GameManager.ClearGameLog();
+
+                currentTile = GetTileAtPosition(this.position);
+
+                switch (currentTile.EventType)
+                {
+                    case "vide":
+                        GameManager.AddToGameLog("La salle où vous vous trouvez est vide.");
+                        GameManager.UpdateLog();
+                        break;
+                    case "monstre":                       
+                        Combat(player, GetMonsterOnTile(currentTile.EventId));
+                        break;
+                    case "coffre":                       
+                        GetRandomEquipement(player);                       
+                        break;
+                    case "sortie":                       
+                        GameManager.AddToGameLog("Vous avez trouvé une sortie!");
+                        GameManager.UpdateLog();
+                        Console.ReadKey(true);
+                        GameManager.VictoryScreen();
+                        return;
+                }
+
+                GameManager.DrawUI(player);
+
+                Movement();
+
+            } while (currentTile.EventId != -1);
+
+        }
+
+        // Tile methods 
+
+        // Returns the tile at the position given as parameter
+        private Tile GetTileAtPosition(int position)
         {
             foreach (Tile tile in map)
             {
-                if (this.position == tile.ID)
+                if (position == tile.ID )
                 {
-                    switch (tile.EventType)
-                    {
-                        case "vide":
-                            Movement();
-                            break;
-                        case "monstre":
-                            Combat(player, MonsterGenerator(tile.EventId));
-                            Movement();
-                            break;
-                        case "coffre":
-                            RandomEquipment(player);
-                            Movement();
-                            break;
-                        case "sortie":
-                            Console.Clear();
-                            Console.WriteLine("Victoir Game Over");
-                            Console.ReadKey();
-                            Environment.Exit(0);
-                            break;
-                    }
+                    return tile;
                 }
             }
+
+            return null;
         }
 
         private void Combat(Character player, Monster encounter)
         {
+            //Set up UI for combat.
+            GameManager.ClearGameLog();
+
+            GameManager.AddToGameLog($"Vous tombez sur un {encounter.Name}!");
+            GameManager.SetGamePrompt("A = Attaquer | S = Attaque spéciale | D = Défendre | P = Utilise une potion");
+            GameManager.UpdateCombatUI(player, encounter);
+
             int initiative = chance.Next(2);
             while (player.CurrentHP > 0 && encounter.CurrentHP > 0)
             {
@@ -147,17 +187,27 @@ namespace TP_Final_DD
                     PlayerChoice(player, encounter);
                 }
 
-                GameManager.UpdateCombatUI(player,encounter);
-                GameManager.ClearCombatLog();
+                GameManager.UpdateCombatUI(player, encounter);
+                GameManager.ClearGameLog();
             }
-            //Le Joueur Meur!!!
+            //Le Joueur Meurt!!!
             if (player.CurrentHP < 1)
             {
                 Console.Clear();
-                //GameLogger.GameOverScreen();
-                Console.ReadKey();
-                Environment.Exit(0);
+                GameManager.GameOverScreen();
+                return;
             }
+            else
+            {
+                GameManager.AddToGameLog($"Vous avez défait le {encounter.Name}!");
+                GameManager.SetGamePrompt("Appuyez sur une touche pour continuer.");               
+                GameManager.UpdateLog();               
+            }
+
+            encounter.CurrentHP = encounter.MaxHP;
+
+            Console.ReadKey(true);
+            
         }
 
         private void PlayerChoice(Character player, Monster encounter)
@@ -165,7 +215,7 @@ namespace TP_Final_DD
             bool wrongInput = false;
             do
             {
-                switch (Console.ReadKey().KeyChar)
+                switch (Console.ReadKey(true).KeyChar)
                 {
                     case 'a':
                         GameManager.AddToGameLog($"Vous attaquez le {encounter.Name} avec votre {player.Weapon}");
@@ -192,13 +242,11 @@ namespace TP_Final_DD
                         wrongInput = false;
                         switch (Console.ReadKey(true).KeyChar)
                         {
-                            case 'H':
+                            case 'h':
                                 player.UsePotions("Vie");
-                                GameManager.AddToGameLog("Vous récupérer 50 points de vie.");
                                 break;
-                            case 'M':
+                            case 'm':
                                 player.UsePotions("Mana");
-                                GameManager.AddToGameLog("Vous récupérer 50 points de mana.");
                                 break;
                             default:
                                 wrongInput = true;
@@ -215,7 +263,7 @@ namespace TP_Final_DD
 
         }
 
-        private Monster MonsterGenerator(int eventId)
+        private Monster GetMonsterOnTile(int eventId)
         {
             foreach (Monster encounter in monsters)
             {
@@ -229,41 +277,55 @@ namespace TP_Final_DD
             return null;
         }
 
-        private void RandomEquipment(Character player)
+        private void GetRandomEquipement(Character player)
         {
+            GameManager.AddToGameLog("Vous trouvez un coffre!");
+            
             int EquipmentGenerator = chance.Next(1,6);
             foreach (Equipment item in items)
             {
                 if (EquipmentGenerator == item.ID)
-                {
+                {                   
+                    
+                    GameManager.AddToGameLog($"Vous trouvez un objet : {item.Name}!");
+                    
                     switch (item.ItemType)
                     {
                         case "potion":
-                            player.NumOfPotions++;
+                            GameManager.AddToGameLog("Vous mettez la potion dans votre sac.");
+                            player.NumOfPotions++;                          
                             break;
                         case "arme":
                             if (item.Modifier > player.Attack && item.ClassRequired == player.CharacterClass)
-                            {
+                            {                               
+                                GameManager.AddToGameLog($"Vous changez votre {player.Weapon} pour {item.Name}.");
                                 player.Attack = item.Modifier;
-                                player.Weapon = item.Name;
+                                player.Weapon = item.Name;                                
                             }
                             else
                             {
-                                Console.WriteLine($"{item.Name} est sans valeure");
+                                GameManager.AddToGameLog("L'objet est sans valeur. Vous le laissez là où vous l'avez trouvé.");
                             }
-                            return;
+                            break;
                         case "armure":
                             if (item.Modifier > player.Defense && item.ClassRequired == player.CharacterClass)
                             {
+                                GameManager.AddToGameLog($"Vous changez votre {player.Armor} pour {item.Name}.");
                                 player.Defense = item.Modifier;
                                 player.Armor = item.Name;
                             }
                             else
                             {
-                                Console.WriteLine($"{item.Name} est sans valeure");
+                                GameManager.AddToGameLog($"{item.Name} est sans valeur. Vous le laissez là où vous l'avez trouvé.");
                             }
-                            return;
+                            break;
                     }
+
+                    GameManager.SetGamePrompt("Appuyez sur une touche pour continuer.");
+                    GameManager.UpdateLog();
+                    GameManager.ClearGameLog();
+
+                    Console.ReadKey(true);
                 } 
             }
         }
@@ -280,8 +342,7 @@ namespace TP_Final_DD
             {
                 GameManager.AddToGameLog($"Le {encounter.Name} vous attaque!");
                 encounter.IsDefending = false;
-                player.TakeDamage(encounter.Attack);
-                
+                player.TakeDamage(encounter.Attack);               
             }
 
         }

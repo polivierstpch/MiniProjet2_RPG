@@ -16,7 +16,7 @@ namespace TP_Final_DD
         public int ID { get { return id; } }
         public string Name { get { return name; } }
         public int MaxHP { get { return maxHp; } }
-        public int CurrentHP { get { return currentHp; } }
+        public int CurrentHP { get { return currentHp; } set { currentHp = value; } }
         public int Attack { get { return attack; } }
         public int Defense { get { return defense; } }
         public bool IsDefending { get { return isDefending; } set { isDefending = value; } }
@@ -38,9 +38,19 @@ namespace TP_Final_DD
          
             }
 
-            this.currentHp -= damage;
+            // If damage goes over current HP, set health to 0
+            this.currentHp = this.currentHp - damage >= 0 ? this.currentHp - damage : 0;
+            if (this.currentHp == 0)
+            {
+                GameManager.AddToGameLog($"Le {this.name} est mort.");
+            }
 
-            GameManager.AddToGameLog($"Le {this.name} prends {damage} points de dégâts.");
+            if (damage > 0)
+                GameManager.AddToGameLog($"Le {this.name} prend {damage} points de dégâts.");
+            else
+                GameManager.AddToGameLog($"Le {this.name} ne prend aucun dégâts.");
+
+            
         }
     }
 }

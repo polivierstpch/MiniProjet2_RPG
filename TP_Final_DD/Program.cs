@@ -7,24 +7,18 @@ namespace TP_Final_DD
     class Program
     {
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            
-            Console.WindowWidth = GameManager.WINDOW_WIDTH;
-            Console.BufferWidth = GameManager.WINDOW_WIDTH + 1;
             Console.CursorVisible = false;
+            Console.WindowWidth = GameManager.WINDOW_WIDTH;
+            Console.BufferWidth = GameManager.WINDOW_WIDTH + 1;            
 
+            GameManager.TitleScreen();
 
-            Console.Write(GameManager.TitleScreen());
-            Console.ReadKey();
-            Console.Clear();
+            Character player = GameManager.SetupCharacter();
 
-            ////Test
-            Console.WriteLine("guerrier ou mage");
-            Character joueur = new Character(Console.ReadLine());
-            PlayMap partie = new PlayMap();
-           
-            partie.PlayEvent(joueur);
+            PlayMap game = new PlayMap();          
+            game.PlayGame(player);
             
 
             Console.ReadKey(true);

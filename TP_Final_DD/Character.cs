@@ -25,32 +25,34 @@ namespace TP_Final_DD
         public int Defense { get { return defense; } set { defense = value; } }
         public bool IsDefending { get { return isDefending; } set { isDefending = value; } }
 
-        public Character(string characterClass) // public Personnage (string typePerso)
+        public Character(string characterClass)
         {
             switch (characterClass)
             {
                 case "guerrier":
-                    this.characterClass = characterClass;
+                case "1":
+                    this.characterClass = "guerrier";
                     weapon = "Epée à deux mains";
                     armor = "Armure en cuir";
                     maxHp = 200;
                     currentHp = 200;
                     maxMp = 100;
                     CurrentMP = 100;
-                    Attack = 5;
-                    Defense = 4;
+                    Attack = 10;
+                    Defense = 7;
                     
                     break;
-                case "mage":;
-                    this.characterClass = characterClass;
+                case "mage":
+                case "2":
+                    this.characterClass = "mage";
                     Weapon = "Dague";
                     Armor = "Cape elfique";
                     maxHp = 100;
                     CurrentHP = 100;
                     maxMp = 200;
                     CurrentMP = 200;
-                    Attack = 3;
-                    Defense = 6;        
+                    Attack = 7;
+                    Defense = 10;        
                     break;
             }
 
@@ -63,9 +65,13 @@ namespace TP_Final_DD
                 damage = Math.Max(0, damage - this.defense);
             }
 
-            this.currentHp -= damage;
+            // If health goes under 0 from damage, set it to 0;
+            this.currentHp = this.currentHp - damage >= 0 ? this.currentHp - damage : 0;
 
-            GameManager.AddToGameLog($"Vous prenez {damage} points de dégâts.");
+            if (damage > 0)
+                GameManager.AddToGameLog($"Vous prenez {damage} points de dégâts.");
+            else
+                GameManager.AddToGameLog($"Vous ne prenez aucun dégâts.");
         }
         public void UsePotions(string lifeOrMana)
         {
@@ -76,21 +82,38 @@ namespace TP_Final_DD
                 {
                     case "Vie":
                         if (this.currentHp + 50 < this.MaxHP)
-                        {
+                        {                            
                             this.currentHp += 50;
+                            GameManager.AddToGameLog($"Vous vous soignez de 50 points de vie.");
+                        }
+                        else if (this.currentHp == this.maxHp)
+                        {
+                            GameManager.AddToGameLog("En prenant la potion, vous constatez votre parfaite santé et remettez celle-ci dans votre sac.");
+                            numOfPotions++;
                         }
                         else
                         {
+                            GameManager.AddToGameLog($"Vous vous soignez de {this.maxHp - this.currentHp} points de vie.");
                             this.currentHp = this.maxHp;
                         }
+                        
                         break;
                     case "Mana":
+
+                        GameManager.AddToGameLog("Vous prenez la potion avec l'intention de la boire...");
+
                         if (this.currentMp + 50 < this.MaxMP)
                         {
+                            GameManager.AddToGameLog($"Vous récupérez 50 points de mana.");
                             this.currentMp += 50;
+                        }
+                        else if(this.currentMp == this.maxMp)
+                        {
+                            GameManager.AddToGameLog("En prenant la potion, vous constatez que votre mental est à son apogée. Vous rangez la potion dans votre sac.");
                         }
                         else
                         {
+                            GameManager.AddToGameLog($"Vous récupérez {this.maxMp - this.currentMp} points de mana.");
                             this.currentMp = this.maxMp;
                         }
                         break;
@@ -107,7 +130,7 @@ namespace TP_Final_DD
                         this.currentMp -= 20;
 
                         // Damage dealt is 10
-                        return 10;
+                        return this.attack + 10;
                     }
                     else
                     {
@@ -119,7 +142,7 @@ namespace TP_Final_DD
                     {
                         this.currentMp -= 25;
                         
-                        return 15;
+                        return this.attack + 15;
                     }
                     else
                     {
