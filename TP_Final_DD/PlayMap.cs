@@ -285,8 +285,7 @@ namespace TP_Final_DD
             foreach (Equipment item in items)
             {
                 if (EquipmentGenerator == item.ID)
-                {                   
-                    
+                {
                     GameManager.AddToGameLog($"Vous trouvez un objet : {item.Name}!");
                     
                     switch (item.ItemType)
@@ -321,6 +320,7 @@ namespace TP_Final_DD
                             break;
                     }
 
+                    GameManager.UpdateItemUI(item);
                     GameManager.SetGamePrompt("Appuyez sur une touche pour continuer.");
                     GameManager.UpdateLog();
                     GameManager.ClearGameLog();

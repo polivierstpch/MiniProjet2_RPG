@@ -12,3 +12,10 @@ C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_D
 C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.csproj.CoreCompileInputs.cache
 C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.exe
 C:\Users\Pier-Olivier\Documents\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.pdb
+C:\Users\1993847\Desktop\MiniProjet2_RPG\TP_Final_DD\bin\Debug\TP_Final_DD.exe.config
+C:\Users\1993847\Desktop\MiniProjet2_RPG\TP_Final_DD\bin\Debug\TP_Final_DD.exe
+C:\Users\1993847\Desktop\MiniProjet2_RPG\TP_Final_DD\bin\Debug\TP_Final_DD.pdb
+C:\Users\1993847\Desktop\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.csprojAssemblyReference.cache
+C:\Users\1993847\Desktop\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.csproj.CoreCompileInputs.cache
+C:\Users\1993847\Desktop\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.exe
+C:\Users\1993847\Desktop\MiniProjet2_RPG\TP_Final_DD\obj\Debug\TP_Final_DD.pdb

@@ -233,6 +233,23 @@ namespace TP_Final_DD
            
         }
 
+        public static void UpdateItemUI(Equipment equipement)
+        {
+            Console.SetCursorPosition(0, 2);
+
+            string itemInfo = GetChestInfo(equipement);
+
+            for (int i = 0; i < itemInfo.Length; i++)
+            {
+                if (char.IsDigit(itemInfo[i]))
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                }
+
+                Console.Write(itemInfo[i]);
+                Console.ResetColor();
+            }
+        }
         
 
         public static string GetChestInfo(Equipment equipment)
