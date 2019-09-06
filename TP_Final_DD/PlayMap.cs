@@ -205,6 +205,7 @@ namespace TP_Final_DD
             }
 
             encounter.CurrentHP = encounter.MaxHP;
+            encounter.IsDefending = false;
 
             Console.ReadKey(true);
             
